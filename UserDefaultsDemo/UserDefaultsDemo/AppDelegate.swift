@@ -12,14 +12,34 @@ extension UserDefaults.Key where Value == Int {
     static let launchCount = UserDefaults.Key<Int>(name: "launchCount")
 }
 
+extension UserDefaults.Key where Value == User {
+    static let currentUser = UserDefaults.Key<User>(name: "currentUser")
+}
+
+struct User: UserDefaultsSerializable {
+    let id: Int
+    let name: String
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        let count = UserDefaults.standard.value(for: .launchCount) ?? 0
-        UserDefaults.standard.set(count + 1, for: .launchCount)
+        let count = (UserDefaults.standard.value(for: .launchCount) ?? 0) + 1
+        UserDefaults.standard.set(count, for: .launchCount)
+        
+        print("Launch count is \(count)")
+        
+        if let currentUser: User = UserDefaults.standard.value(for: .currentUser) {
+            print("Current user is \(currentUser.name)")
+        } else {
+            let user = User(id: 1, name: "Ben")
+            UserDefaults.standard.set(user, for: .currentUser)
+            print("Set current user to \(user.name)")
+        }
 
+        
         return true
     }
 
